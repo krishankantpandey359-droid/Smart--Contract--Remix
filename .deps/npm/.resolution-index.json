@@ -1,0 +1,42 @@
+{
+  "contracts/HelloWorld.sol": {
+    "__sources__": {
+      "contracts/HelloWorld.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity >=0.6.12 <0.9.0;\n\ncontract HelloWorld {\n  /**\n   * @dev Prints Hello World string\n   */\n  function print() public pure returns (string memory) {\n    return \"Hello World!\";\n  }\n}\n",
+        "file": "contracts/HelloWorld.sol"
+      }
+    }
+  },
+  "SimpleStorage.sol": {
+    "__sources__": {
+      "SimpleStorage.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n \r\ncontract SimpleStorage {\r\n    uint256 public value;\r\n \r\n    function increment() public {\r\n        value += 1;\r\n    }\r\n \r\n    function decrement() public {\r\n        value -= 1;\r\n    }\r\n}",
+        "file": "SimpleStorage.sol"
+      }
+    }
+  },
+  "MultiSend.sol": {
+    "__sources__": {
+      "MultiSend.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n \r\ncontract MultiSend {\r\n \r\n    function multiSend(address payable[] calldata recipients) external payable {\r\n        require(recipients.length > 0, \"No recipients\");\r\n        require(msg.value > 0, \"No Ether sent\");\r\n        require(msg.value % recipients.length == 0, \"Amount not equally divisible\");\r\n \r\n        uint256 amount = msg.value / recipients.length;\r\n \r\n        for (uint256 i = 0; i < recipients.length; i++) {\r\n            require(recipients[i] != address(0), \"Invalid address\");\r\n \r\n            (bool success, ) = recipients[i].call{value: amount}(\"\");\r\n            require(success, \"Transfer failed\");\r\n        }\r\n    }\r\n}\r\n ",
+        "file": "MultiSend.sol"
+      }
+    }
+  },
+  "PollingSystem.sol": {
+    "__sources__": {
+      "PollingSystem.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n \r\ncontract PollingSystem {\r\n \r\n    struct Poll {\r\n        string title;\r\n        string[] options;\r\n        uint256 endTime;\r\n        bool exists;\r\n    }\r\n \r\n    uint256 public pollCount;\r\n \r\n    mapping(uint256 => Poll) public polls;\r\n \r\n    // pollId => optionIndex => vote count\r\n    mapping(uint256 => mapping(uint256 => uint256)) public voteCounts;\r\n \r\n    // pollId => voter address => already voted\r\n    mapping(uint256 => mapping(address => bool)) public hasVoted;\r\n \r\n    function createPoll(\r\n        string memory _title,\r\n        string[] memory _options,\r\n        uint256 _duration\r\n    ) external {\r\n \r\n        require(bytes(_title).length > 0, \"Title required\");\r\n        require(_options.length >= 2, \"At least 2 options required\");\r\n        require(_duration > 0, \"Duration must be greater than 0\");\r\n \r\n        pollCount++;\r\n \r\n        Poll storage newPoll = polls[pollCount];\r\n \r\n        newPoll.title = _title;\r\n        newPoll.endTime = block.timestamp + _duration;\r\n        newPoll.exists = true;\r\n \r\n        for (uint256 i = 0; i < _options.length; i++) {\r\n            newPoll.options.push(_options[i]);\r\n        }\r\n    }\r\n \r\n    function vote(uint256 _pollId, uint256 _optionIndex) external {\r\n \r\n        require(polls[_pollId].exists, \"Poll does not exist\");\r\n        require(block.timestamp < polls[_pollId].endTime, \"Poll has ended\");\r\n        require(!hasVoted[_pollId][msg.sender], \"Already voted\");\r\n        require(\r\n            _optionIndex < polls[_pollId].options.length,\r\n            \"Invalid option\"\r\n        );\r\n \r\n        hasVoted[_pollId][msg.sender] = true;\r\n        voteCounts[_pollId][_optionIndex]++;\r\n    }\r\n \r\n    function getWinner(uint256 _pollId)\r\n        external\r\n        view\r\n        returns (string memory winner, uint256 votes)\r\n    {\r\n        require(polls[_pollId].exists, \"Poll does not exist\");\r\n        require(block.timestamp >= polls[_pollId].endTime, \"Poll is still active\");\r\n \r\n        uint256 winningOption = 0;\r\n        uint256 highestVotes = 0;\r\n \r\n        for (uint256 i = 0; i < polls[_pollId].options.length; i++) {\r\n            if (voteCounts[_pollId][i] > highestVotes) {\r\n                highestVotes = voteCounts[_pollId][i];\r\n                winningOption = i;\r\n            }\r\n        }\r\n \r\n        return (\r\n            polls[_pollId].options[winningOption],\r\n            highestVotes\r\n        );\r\n    }\r\n}\r\n ",
+        "file": "PollingSystem.sol"
+      }
+    }
+  },
+  "CryptoLocking.sol": {
+    "__sources__": {
+      "CryptoLocking.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n \r\ncontract CryptoLocking {\r\n \r\n    struct Deposit {\r\n        uint256 amount;\r\n        uint256 unlockTime;\r\n    }\r\n \r\n    mapping(address => Deposit) public deposits;\r\n \r\n    function deposit(uint256 _lockTime) external payable {\r\n        require(msg.value > 0, \"No Ether sent\");\r\n        require(_lockTime > 0, \"Lock time must be greater than 0\");\r\n \r\n        deposits[msg.sender] = Deposit({\r\n            amount: msg.value,\r\n            unlockTime: block.timestamp + _lockTime\r\n        });\r\n    }\r\n \r\n    function withdraw() external {\r\n        Deposit memory userDeposit = deposits[msg.sender];\r\n \r\n        require(userDeposit.amount > 0, \"No deposit found\");\r\n        require(\r\n            block.timestamp >= userDeposit.unlockTime,\r\n            \"Funds are still locked\"\r\n        );\r\n \r\n        uint256 amount = userDeposit.amount;\r\n \r\n        delete deposits[msg.sender];\r\n \r\n        payable(msg.sender).transfer(amount);\r\n    }\r\n}\r\n ",
+        "file": "CryptoLocking.sol"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address payable[]",
+						"name": "recipients",
+						"type": "address[]"
+					}
+				],
+				"name": "multiSend",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"MultiSend.sol": "MultiSend"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"MultiSend.sol": {
+			"keccak256": "0x3444564b214dd2742bd0ac9eb1734621be6f224c3e50ef7ab18c8d0f0f618823",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b4bb8606ab816c25ea414cbc79a8ae6651faf585a86181f9995b38c1876f752c",
+				"dweb:/ipfs/QmcabHQUNqs9A5rfnyv5zyNfCH6nGsup6G7jdMFX51NdLH"
+			]
+		}
+	},
+	"version": 1
+}
