@@ -45,6 +45,15 @@ contract RemainingContractsTest {
         sender.multiSend{value: 1 ether}(recipients);
     }
 
+    function testMultiSendRejectsZeroEther() external {
+        MultiSend sender = new MultiSend();
+        AcceptEther recipient = new AcceptEther();
+        address payable[] memory recipients = new address payable[](1);
+        recipients[0] = payable(address(recipient));
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "No Ether sent"));
+        sender.multiSend(recipients);
+    }
+
     function testMultiSendRejectsNonDivisibleAmount() external {
         MultiSend sender = new MultiSend();
         AcceptEther recipient = new AcceptEther();
@@ -132,6 +141,18 @@ contract RemainingContractsTest {
         polling.createPoll("Poll", oneOption, 10);
         vm.expectRevert(abi.encodeWithSignature("Error(string)", "Duration must be greater than 0"));
         polling.createPoll("Poll", twoOptions, 0);
+    }
+
+    function testPollingTieKeepsFirstOptionAsWinner() external {
+        PollingSystem polling = new PollingSystem();
+        string[] memory options = new string[](2);
+        options[0] = "First";
+        options[1] = "Second";
+        polling.createPoll("Tie poll", options, 5);
+        vm.warp(block.timestamp + 5);
+        (string memory winner, uint256 votes) = polling.getWinner(1);
+        require(keccak256(bytes(winner)) == keccak256(bytes("First")), "tie policy changed");
+        require(votes == 0, "unexpected votes");
     }
 
     function testSimpleStorageIncrementAndDecrement() external {
