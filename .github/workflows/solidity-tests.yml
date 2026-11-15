@@ -1,0 +1,25 @@
+name: Solidity tests
+
+on:
+  pull_request:
+    paths:
+      - "**.sol"
+      - "foundry.toml"
+      - "test/**"
+      - ".github/workflows/solidity-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "**.sol"
+      - "foundry.toml"
+      - "test/**"
+      - ".github/workflows/solidity-tests.yml"
+
+jobs:
+  foundry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Run CryptoLocking regression tests
+        run: forge test --match-path test/CryptoLocking.t.sol -vv
