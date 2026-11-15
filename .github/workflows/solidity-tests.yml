@@ -21,5 +21,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: foundry-rs/foundry-toolchain@v1
-      - name: Run CryptoLocking regression tests
-        run: forge test --match-path test/CryptoLocking.t.sol -vv
+      - name: Run all Solidity regression tests
+        run: forge test -vv
