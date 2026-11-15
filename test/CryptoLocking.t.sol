@@ -7,6 +7,33 @@ interface Vm {
     function deal(address account, uint256 newBalance) external;
     function warp(uint256 newTimestamp) external;
     function expectRevert(bytes calldata revertData) external;
+    function testContractWalletCanWithdrawAfterUnlock() external {
+        CryptoLocking locker = new CryptoLocking();
+        ContractWallet wallet = new ContractWallet();
+        vm.deal(address(this), 2 ether);
+
+        wallet.makeDeposit{value: 1 ether}(locker, 10);
+        vm.warp(block.timestamp + 10);
+        wallet.withdrawFrom(locker);
+
+        require(address(wallet).balance == 1 ether, "wallet did not receive Ether");
+        (uint256 amount, ) = locker.deposits(address(wallet));
+        require(amount == 0, "wallet deposit record was not cleared");
+    }
+
+}
+
+
+contract ContractWallet {
+    receive() external payable {}
+
+    function makeDeposit(CryptoLocking locker, uint256 lockTime) external payable {
+        locker.deposit{value: msg.value}(lockTime);
+    }
+
+    function withdrawFrom(CryptoLocking locker) external {
+        locker.withdraw();
+    }
 }
 
 contract CryptoLockingTest {
