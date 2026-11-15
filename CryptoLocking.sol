@@ -35,6 +35,7 @@ contract CryptoLocking {
         uint256 amount = userDeposit.amount;
         delete deposits[msg.sender];
 
-        payable(msg.sender).transfer(amount);
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "Withdrawal transfer failed");
     }
 }
