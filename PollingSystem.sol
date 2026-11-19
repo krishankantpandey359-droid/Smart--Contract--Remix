@@ -29,6 +29,17 @@ contract PollingSystem {
         require(bytes(_title).length > 0, "Title required");
         require(_options.length >= 2, "At least 2 options required");
         require(_duration > 0, "Duration must be greater than 0");
+
+        // Reject blank or repeated labels so each vote maps to one clear choice.
+        for (uint256 i = 0; i < _options.length; i++) {
+            require(bytes(_options[i]).length > 0, "Option text required");
+            for (uint256 j = 0; j < i; j++) {
+                require(
+                    keccak256(bytes(_options[i])) != keccak256(bytes(_options[j])),
+                    "Duplicate option"
+                );
+            }
+        }
  
         pollCount++;
  
