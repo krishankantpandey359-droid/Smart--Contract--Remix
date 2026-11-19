@@ -91,5 +91,21 @@ contract PollingSystem {
             highestVotes
         );
     }
+    function _hasNonWhitespace(string memory value) private pure returns (bool) {
+        bytes memory data = bytes(value);
+        for (uint256 i = 0; i < data.length; i++) {
+            bytes1 character = data[i];
+            if (
+                character != 0x20 &&
+                character != 0x09 &&
+                character != 0x0a &&
+                character != 0x0d
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
  
