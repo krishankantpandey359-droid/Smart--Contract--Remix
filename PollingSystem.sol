@@ -26,9 +26,20 @@ contract PollingSystem {
         uint256 _duration
     ) external {
  
-        require(bytes(_title).length > 0, "Title required");
+        require(_hasNonWhitespace(_title), "Title required");
         require(_options.length >= 2, "At least 2 options required");
         require(_duration > 0, "Duration must be greater than 0");
+
+        // Reject blank or repeated labels so each vote maps to one clear choice.
+        for (uint256 i = 0; i < _options.length; i++) {
+            require(_hasNonWhitespace(_options[i]), "Option text required");
+            for (uint256 j = 0; j < i; j++) {
+                require(
+                    keccak256(bytes(_options[i])) != keccak256(bytes(_options[j])),
+                    "Duplicate option"
+                );
+            }
+        }
  
         pollCount++;
  
@@ -80,5 +91,21 @@ contract PollingSystem {
             highestVotes
         );
     }
+    function _hasNonWhitespace(string memory value) private pure returns (bool) {
+        bytes memory data = bytes(value);
+        for (uint256 i = 0; i < data.length; i++) {
+            bytes1 character = data[i];
+            if (
+                character != 0x20 &&
+                character != 0x09 &&
+                character != 0x0a &&
+                character != 0x0d
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
  

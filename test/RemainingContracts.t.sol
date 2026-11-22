@@ -143,6 +143,44 @@ contract RemainingContractsTest {
         polling.createPoll("Poll", twoOptions, 0);
     }
 
+    function testPollingRejectsEmptyOptionText() external {
+        PollingSystem polling = new PollingSystem();
+        string[] memory options = new string[](2);
+        options[0] = "";
+        options[1] = "Option B";
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "Option text required"));
+        polling.createPoll("Test poll", options, 10);
+    }
+
+    function testPollingRejectsDuplicateOptionLabels() external {
+        PollingSystem polling = new PollingSystem();
+        string[] memory options = new string[](3);
+        options[0] = "Option A";
+        options[1] = "Option B";
+        options[2] = "Option A";
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "Duplicate option"));
+        polling.createPoll("Test poll", options, 10);
+    }
+
+
+    function testPollingRejectsWhitespaceOnlyTitle() external {
+        PollingSystem polling = new PollingSystem();
+        string[] memory options = new string[](2);
+        options[0] = "Option A";
+        options[1] = "Option B";
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "Title required"));
+        polling.createPoll(" \t\n ", options, 10);
+    }
+
+    function testPollingRejectsWhitespaceOnlyOption() external {
+        PollingSystem polling = new PollingSystem();
+        string[] memory options = new string[](2);
+        options[0] = "Option A";
+        options[1] = " \t\n ";
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "Option text required"));
+        polling.createPoll("Valid title", options, 10);
+    }
+
     function testPollingTieKeepsFirstOptionAsWinner() external {
         PollingSystem polling = new PollingSystem();
         string[] memory options = new string[](2);
