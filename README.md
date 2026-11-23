@@ -1,6 +1,6 @@
 # Smart Contract Remix
 
-A learning project containing four Solidity contracts: Ether time-locking, equal-value multi-send, on-chain polling, and a basic storage example.
+A learning project containing five Solidity contracts: Ether time-locking, equal-value multi-send, on-chain polling, basic storage, and a Hello World example.
 
 ## Contracts
 
@@ -10,6 +10,7 @@ A learning project containing four Solidity contracts: Ether time-locking, equal
 | `MultiSend.sol` | Split the transaction's Ether equally across recipients | Rejects an empty recipient list, zero Ether, non-divisible amounts, zero addresses, and failed transfers. A failed recipient reverts the complete transaction. |
 | `PollingSystem.sol` | Create polls, accept votes, and return a winner after the poll ends | Each address gets one vote per poll. The first option wins ties. If nobody votes, the first option is returned with zero votes. |
 | `SimpleStorage.sol` | Store an unsigned integer and increment or decrement it | Decrementing when the value is zero reverts under Solidity 0.8 checked arithmetic. |
+| `contracts/HelloWorld.sol` | Return a basic Hello World string | Read-only example function. |
 
 ## Requirements
 
@@ -31,7 +32,7 @@ The test suite covers deposit accumulation and lock extension, locked withdrawal
 ## Compile and deploy with Remix
 
 1. Open [Remix IDE](https://remix.ethereum.org/).
-2. Import or upload the four `.sol` files from this repository.
+2. Import or upload the five `.sol` files from this repository.
 3. Select the contract you want to compile in the Solidity Compiler.
 4. Choose a compiler version compatible with `^0.8.20`, then compile.
 5. In Deploy & Run Transactions, choose the appropriate environment. Use Remix VM for local experiments. Use an injected wallet only when you understand the selected network and transaction costs.
@@ -43,7 +44,7 @@ These instructions describe a manual Remix workflow. They do not claim that the 
 
 - `CryptoLocking` uses a checked low-level call for withdrawals and clears the caller's deposit record before making the external call. Contract-wallet withdrawals are covered by a regression test.
 - `MultiSend` makes an external call to each recipient. A recipient contract executes code during receipt. Only send Ether to recipient addresses you trust. A revert from any recipient reverts the whole transaction.
-- `PollingSystem` permits duplicate or empty option strings. Poll creators should provide distinct, meaningful options. The contract does not provide poll-owner permissions or vote privacy. Votes are publicly readable on-chain.
+- `PollingSystem` rejects whitespace-only titles/options and exact duplicate option strings. Duplicate comparison is byte-for-byte, so labels differing by whitespace or letter case remain distinct. The contract does not provide poll-owner permissions or vote privacy. Votes are publicly readable on-chain.
 - Polls with tied vote counts return the earliest option in the stored option list. A poll with no votes also returns its first option, with a count of zero.
 - These contracts are educational examples. The automated tests are regression checks, not a formal security audit. Review the code and obtain an independent audit before using real funds or deploying in production.
 
@@ -55,6 +56,8 @@ These instructions describe a manual Remix workflow. They do not claim that the 
 ├── MultiSend.sol
 ├── PollingSystem.sol
 ├── SimpleStorage.sol
+├── contracts/
+│   └── HelloWorld.sol
 ├── foundry.toml
 ├── test/
 │   ├── CryptoLocking.t.sol
