@@ -69,7 +69,7 @@ These instructions describe a manual Remix workflow. They do not claim that the 
 
 ## Test status
 
-The latest completed main-branch GitHub Actions run checked on 24 November 2026 is [run #45054787115](https://github.com/krishankantpandey359-droid/Smart--Contract--Remix/actions/runs/45054787115). It passed. The documented earlier run #43723528966 is retained in the commit history but is no longer presented as the latest run.
+The latest completed main-branch GitHub Actions run checked on 24 November 2026 is [run #45054787115](https://github.com/krishankantpandey359-droid/Smart--Contract--Remix/actions/runs/45054787115). It passed 22 regression tests across two Foundry test suites (5 + 17), with zero failures or skipped tests. The documented earlier run #43723528966 is retained in the commit history but is no longer presented as the latest run.
 
 ## Author
 
