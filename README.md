@@ -69,7 +69,7 @@ These instructions describe a manual Remix workflow. They do not claim that the 
 
 ## Test status
 
-The latest completed GitHub Actions run for the final contract-wallet withdrawal change passed all 18 tests. See the [workflow run](https://github.com/krishankantpandey359-droid/Smart--Contract--Remix/actions/runs/43723528966).
+The latest completed main-branch GitHub Actions run checked on 24 November 2026 is [run #45054787115](https://github.com/krishankantpandey359-droid/Smart--Contract--Remix/actions/runs/45054787115). It passed. The documented earlier run #43723528966 is retained in the commit history but is no longer presented as the latest run.
 
 ## Author
 
